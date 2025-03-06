@@ -27,8 +27,8 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install packaging
-        run: uv pip install packaging
+      # - name: Install packaging
+      #   run: uv pip install packaging
 
       - name: Extract version from pyproject.toml
         id: get-version
