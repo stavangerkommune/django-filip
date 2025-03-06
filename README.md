@@ -1,55 +1,54 @@
-# Integrasjon fra Visma Enterprise Økonomisystem til ISY ProsjektØkonomi
-![status: aktiv](https://img.shields.io/badge/status-aktiv-blue) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) ![tar imot bidrag: ja](https://img.shields.io/badge/tar_imot_bidrag-ja-g) ![licence: MIT](https://img.shields.io/badge/license-MIT-blue)
+# Django-Filip
+![status: aktiv](https://img.shields.io/badge/status-aktiv-blue) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) ![licence: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-## Hvorfor?
-Visma har en standard-integrasjon for å overføre transaksjons-informasjon til ISY. Denne detaljerer hver regnskapslinje.
+## Bakgrunn
+Filip begynte som et system for å teleportere filer mellom regnskapsprogram og nisjesystem.
 
-Vi er imidlertid interessert i en integrasjon som aggregerer linjene. Hovedinformasjonen vi er interessert i å få over til ISY er bilagsnummer, ansvar, prosjekt, faktura og beløp. Hvordan fakturaen er splittet for å legge til rette for ulik behandling av MVA osv. er ikke like interessant for oss, og å få over denne informasjonen til ISY vil, etter vår vurdering, kunne skape mer etterarbeid.
+Programmet gir i dag mulighet for å behandle data og synkronisere data mellom systemer.
 
-## Hvordan?
-Programmet settes opp til å kjøre jevnlig, eksempelvis hvert 5. minutt.
 
-Programmet søker etter nye, posterte journalnummer i Visma for hvert selskap det er stilt inn til å søke igjennom.
-
-Programmet søker så opp alle bilagsnummer som har rett kombinasjon av ansvar og prosjekt.
-
-Programmet henter så inn bilagslinjene, bearbeider og eksporterer resultatet til et format som kan importeres av ISY Prosjektøkonomi.
-
-```mermaid
-flowchart TD
-    A(Hent info om nye posteringsjournaler fra Visma)
-    A --> | Lag liste over bilagsnummer med linjer som er\n filtrert på ansvar fra setup.toml,\n og som er påført prosjektnummer. | B(Hent bilagslinjer fra Visma)
-    B --> | Beregn MVA og bruttobeløp | C{Er bilaget en faktura?}
-    C -->|Ja| D(Kopier fakturainformasjon)
-    C -->|Nei| E(Fortsett)
-    D --> F
-    E --> F(Utlign øreavrunding)
-    F --> G(Aggreger bilag)
-    G --> H(Lagre fakturadokumenter)
-    H --> I(Lagre transaksjonsrapport til ISY)
-  
-```
-
-## Kom i gang
+## Quickstart
+Installer med pip
 ```console
-git clone https://github.com/stavangerkommune/ve-til-isy
-cd ve-til-isy
-python -m venv .venv
-.venv\script\activate
-python -m pip install -r requirements.lock
-python -m src.ve_til_isy
+pip install django-filip
 ```
 
-## Docker
-Docker image ligger på Docker Hub.
+Legg til i installerte apper
+```python
+# setup.py
 
+INSTALLED_APPS = [
+    ...
+    # Følgende app er påkrevd:
+    'django-filip.core', # Grunnfunksjonalitet
+
+    # Resten kan velges
+    'django-filip.hent', # For å hente fra filer og systemer
+    'django-filip.send', # For å sende bearbeidede data
+    'django-filip.pool', # Dokumentbibliotek
+    'django-filip.open', # Åpne data
+```
+
+Oppdater urls.py
+```python
+# urls.py
+
+urlpatterns = [
+    ...
+    path('django_filip/', include('django_filip.core.urls')),
+    ...
+]
+```
+
+Etter du har lagt disse til kjører du en migrering
 ```console
-docker run sk29433/ve-til-isy
+python manage.py migrate
 ```
 
-## Innstillinger
-Scriptet bruker environment variables. Se ".env.dist" for hvilke variabler du trenger.
 
-Dersom du ikke ønsker å bruke environment variabler kan du i stedet kopiere .env.dist til .env, og redigere denne.
-
-Filsti er filstien til config-fila (setup.toml), og filer som skal lastes opp på SFTP-server.
+## Utvikling (uv)
+```console
+git clone https://github.com/stavangerkommune/django-filip
+cd django-filip
+uv sync
+```

@@ -1,33 +1,33 @@
 [project]
-name = "ve-til-isy"
+name = "django-filip"
 version = "0.1.0"
-description = "En integrasjon for å overføre regnskapsinfo fra Visma Enterprise Økonomisystem til ISY Prosjektøkonomi"
-authors = [
-    { name = "Erlend D. Handeland", email = "erlend.dietrich.handeland@stavanger.kommune.no" }
-]
+description = ""
+authors = [{name = "Erlend D. Handeland", email = "erlend.dietrich.handeland@stavanger.kommune.no"}]
+license = {text = "MIT"}
 dependencies = [
-    "python-dotenv>=1.0.1",
-    "pymssql>=2.3.0",
-    "pandas>=2.2.2",
-    "openpyxl>=3.1.5",
-    "tomlkit>=0.13.0",
-    "paramiko>=3.4.1",
+    "cryptography>=44.0.2",
+    "django>=4.0",
     "requests>=2.32.3",
 ]
-readme = "README.md"
-requires-python = ">= 3.12"
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/django-filip"
+Repository = "https://github.com/yourusername/django-filip.git"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
-managed = true
-universal = true
-dev-dependencies = []
-
-[tool.hatch.metadata]
-allow-direct-references = true
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0",
+    "pytest-django>=4.5",
+]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/visma_isy"]
+packages = ["django_filip"]
