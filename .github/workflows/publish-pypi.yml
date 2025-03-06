@@ -3,7 +3,7 @@ name: Publish to PyPI on Version Bump
 on:
   push:
     branches:
-      - main  # Trigger on pushes to main (adjust as needed)
+      - master
     paths:
       - 'pyproject.toml'  # Only run if pyproject.toml changes
 
