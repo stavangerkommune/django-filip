@@ -1,0 +1,59 @@
+name: Publish to PyPI on Version Bump
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to main (adjust as needed)
+    paths:
+      - 'pyproject.toml'  # Only run if pyproject.toml changes
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for Trusted Publishing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"  # For tomllib
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install packaging
+        run: uv pip install packaging
+
+      - name: Extract version from pyproject.toml
+        id: get-version
+        run: |
+          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check latest version on PyPI
+        id: check-pypi
+        run: |
+          PACKAGE_NAME=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['name'])")
+          LATEST_PYPY_VERSION=$(uv pip show "$PACKAGE_NAME" --index https://pypi.org/simple/ | grep -oP 'Version: \K.*')
+          echo "LATEST_PYPY_VERSION=$LATEST_PYPY_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Compare versions and publish
+        run: |
+          CURRENT_VERSION="${{ steps.get-version.outputs.VERSION }}"
+          LATEST_PYPY_VERSION="${{ steps.check-pypi.outputs.LATEST_PYPY_VERSION }}"
+
+          # Compare versions using Python
+          python -c "from packaging import version; exit(0 if version.parse('$CURRENT_VERSION') > version.parse('$LATEST_PYPY_VERSION') else 1)" || {
+            echo "Current version ($CURRENT_VERSION) is not greater than PyPI version ($LATEST_PYPY_VERSION), skipping publish"
+            exit 0
+          }
+
+          echo "New version detected: $CURRENT_VERSION > $LATEST_PYPY_VERSION, publishing..."
+          uv build
+          uv publish

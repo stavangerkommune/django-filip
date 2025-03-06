@@ -1,7 +1,7 @@
 [project]
 name = "django-filip"
 version = "0.1.0"
-description = ""
+description = "Utveksling av data mellom regnskapsprogram og nisjesystem"
 authors = [{name = "Erlend D. Handeland", email = "erlend.dietrich.handeland@stavanger.kommune.no"}]
 license = {text = "MIT"}
 dependencies = [
