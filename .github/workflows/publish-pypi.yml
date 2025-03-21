@@ -27,8 +27,16 @@ jobs:
         with:
           version: "latest"
 
+
       - name: Install dependencies
-        run: uv pip install packaging requests --system  # Add requests for PyPI API
+        run: uv pip install packaging requests pytest pytest-django django --system  # Add test dependencies
+  
+      - name: Run tests
+        run: |
+            uv run pytest django_filip/*/tests.py --ds=tests.settings  # Adjust settings path if needed
+        env:
+          DJANGO_SETTINGS_MODULE: tests.settings  # Optional: specify settings if required
+  
 
       - name: Extract version from pyproject.toml
         id: get-version
