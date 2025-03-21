@@ -8,7 +8,7 @@ on:
       - 'pyproject.toml'  # Only run if pyproject.toml changes
 
 jobs:
-  publish:
+  test-and-publish:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Required for Trusted Publishing
@@ -58,10 +58,10 @@ jobs:
 
           # Compare versions using Python
           python -c "from packaging import version; exit(0 if version.parse('$CURRENT_VERSION') > version.parse('$LATEST_PYPY_VERSION') else 1)" || {
-            echo "Current version ($CURRENT_VERSION) is not greater than PyPI version ($LATEST_PYPY_VERSION), skipping publish"
+            echo "::notice title=Publish Skipped::Current version ($CURRENT_VERSION) is not greater than PyPI version ($LATEST_PYPY_VERSION), skipping publish"
             exit 0
           }
 
-          echo "New version detected: $CURRENT_VERSION > $LATEST_PYPY_VERSION, publishing..."
+          echo "::notice title=Publishing to PyPI::New version detected: $CURRENT_VERSION > $LATEST_PYPY_VERSION, publishing..."
           uv build
           uv publish
