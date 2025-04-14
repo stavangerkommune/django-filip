@@ -2,6 +2,8 @@
 name = "django-filip"
 version = "0.1.2"
 description = "Utveksling av data mellom regnskapsprogram og nisjesystem"
+readme = "README.md"
+requires-python = ">=3.10"
 authors = [{name = "Erlend D. Handeland", email = "erlend.dietrich.handeland@stavanger.kommune.no"}]
 license = {text = "BSD-3-Clause"}
 dependencies = [
