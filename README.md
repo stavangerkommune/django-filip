@@ -52,3 +52,14 @@ git clone https://github.com/stavangerkommune/django-filip
 cd django-filip
 uv sync
 ```
+
+## Compatibility
+Dette biblioteket er designet og testet for å fungere med Django LTS-versjonene:
+- Django 4.2.x (f.eks., 4.2.20)
+- Django 5.2.x (f.eks., 5.2.0)
+
+Andre versjoner (f.eks., 5.0.x, 5.1.x) er ikke offisielt støttet. Skal du bruke dette biblioteket - sørg for at prosjektet er låst mot en av LTS-versjonene i 'pyproject.toml':
+
+For Django 4.2.x:
+```toml
+dependencies = ["django>=4.2,<4.3", "django-filip>=0.1.0"]
