@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.3] - Utils
+### Changed
+- Ingen viktige endringer
+
 ## [0.1.2] - Utils
 ### Added
 - paramiko
@@ -8,7 +12,7 @@ All notable changes to this project will be documented in this file. This change
 
 ## [0.1.1] - Test actions
 ### Changed
-- No notable changes
+- Ingen viktige endringer
 
 
 ## [0.1.0] - Initial
