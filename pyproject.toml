@@ -1,7 +1,7 @@
 [project]
 name = "django-filip"
 version = "0.1.4"
-description = "Exchanging data between different systems."
+description = "Exchanging data between different systems"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "Erlend D. Handeland", email = "erlend.dietrich.handeland@stavanger.kommune.no"}]
