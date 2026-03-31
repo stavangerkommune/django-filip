@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"  # For tomllib
+          python-version: "3.11"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -29,13 +29,13 @@ jobs:
 
 
       - name: Install dependencies
-        run: uv pip install packaging requests pytest pytest-django django --system  # Add test dependencies
+        run: uv sync --frozen --dev  # Installs prod + dev dependencies
   
       - name: Run tests
         run: |
-            uv run pytest django_filip/*/tests.py --ds=tests.settings  # Adjust settings path if needed
+            uv run pytest django_filip/tests --ds=tests.settings
         env:
-          DJANGO_SETTINGS_MODULE: tests.settings  # Optional: specify settings if required
+          DJANGO_SETTINGS_MODULE: tests.settings
   
 
       - name: Extract version from pyproject.toml

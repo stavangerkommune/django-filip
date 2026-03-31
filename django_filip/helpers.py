@@ -1,10 +1,5 @@
 import logging
-from typing import Any
 
-import yaml
-from yaml import YAMLError
-
-# Set up logger
 logger = logging.getLogger(__name__)
 
 
@@ -34,26 +29,14 @@ def build_url(base_url: str, relative_path: str = '') -> str | None:
 
     """
 
+    # Security guard (prevents open-redirect / hijack)
+    if '://' in relative_path or relative_path.startswith('//'):
+        raise ValueError(f'Absolute/protocol-relative path not allowed: {relative_path!r}')
+
     base_url = f'{str(base_url).rstrip("/")}/'
     relative_path = str(relative_path).lstrip('/')
 
     if base_url == '/':
         return None
 
-    # Security guard (prevents open-redirect / hijack)
-    if '://' in relative_path or relative_path.startswith('//'):
-        raise ValueError(f'Absolute/protocol-relative path not allowed: {relative_path!r}')
-
     return f'{base_url}{relative_path}'
-
-
-def parse_adapter_yaml(raw: str) -> dict[str, Any]:
-    """Safe parse of Adapter.yaml_adapter content."""
-    if not raw or not raw.strip():
-        return {}
-    try:
-        data = yaml.safe_load(raw)
-        return data if isinstance(data, dict) else {}
-    except YAMLError:
-        logger.error('YAML parse failed in Adapter', exc_info=True)
-        return {}
