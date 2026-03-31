@@ -1,65 +1,72 @@
 # Django-Filip
-![status: aktiv](https://img.shields.io/badge/status-aktiv-blue) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) ![licence: MIT](https://img.shields.io/badge/license-MIT-blue)
+![status: active](https://img.shields.io/badge/status-active-blue) [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) ![license: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-green)
 
-## Bakgrunn
-Filip begynte som et system for å teleportere filer mellom regnskapsprogram og nisjesystem.
+## Background
+django-filip is a light-weight integration layer for use with Django. It allows you to easily connect to different kinds of servers, using API, MSSQL and SFTP.
 
-Programmet gir i dag mulighet for å behandle data og synkronisere data mellom systemer.
+django-filip is currently in early development, and breaking changes may happen at any time. Make sure to pin your exact version!
 
 
 ## Quickstart
-Installer med pip
+Installing with uv
 ```console
-pip install django-filip
+uv add django-filip
 ```
 
-Legg til i installerte apper
+Add to installed apps
 ```python
-# setup.py
+# settings.py
 
 INSTALLED_APPS = [
     ...
-    # Følgende app er påkrevd:
-    'django-filip.core', # Grunnfunksjonalitet
-
-    # Resten kan velges
-    'django-filip.hent', # For å hente fra filer og systemer
-    'django-filip.send', # For å sende bearbeidede data
-    'django-filip.pool', # Dokumentbibliotek
-    'django-filip.open', # Åpne data
+    'django-filip',
+    ...
 ```
 
-Oppdater urls.py
+Make sure to do database migrations:
+```console
+uv run manage.py migrate
+```
+
+## Usage examples
+Set up connections in Django-Admin
+
+### API Request
 ```python
-# urls.py
+from django_filip.models import Connection
 
-urlpatterns = [
-    ...
-    path('django_filip/', include('django_filip.core.urls')),
-    ...
-]
+connection = Connection.objects.get(id=1)
+response = connection.client.get('v1/objects/suppliers?param=1')
+items = response.json()
 ```
 
-Etter du har lagt disse til kjører du en migrering
-```console
-python manage.py migrate
+### Database Query
+```python
+from django_filip.models import Connection
+
+connection = Connection.objects.get(id=1)
+query = 'SELECT * FROM suppliers'
+results = connection.client.execute_query(query)
 ```
 
+### SFTP Upload
+```python
+from django_filip.models import Connection
 
-## Utvikling (uv)
-```console
-git clone https://github.com/stavangerkommune/django-filip
-cd django-filip
-uv sync
+connection = Connection.objects.get(id=1)
+with document.file.open('rb') as file:
+    response = connection.client.upload(file, '/remote/path', 'document.pdf')
 ```
+
+For more examples, see [examples.md](docs/examples.md)
 
 ## Compatibility
-Dette biblioteket er designet og testet for å fungere med Django LTS-versjonene:
-- Django 4.2.x (f.eks., 4.2.20)
-- Django 5.2.x (f.eks., 5.2.0)
+This app is designed and tested to work with the Django LTS versions:
+- Django 5.2.x
 
-Andre versjoner (f.eks., 5.0.x, 5.1.x) er ikke offisielt støttet. Skal du bruke dette biblioteket - sørg for at prosjektet er låst mot en av LTS-versjonene i 'pyproject.toml':
+Other versions (ex. 5.0.x, 5.1.x) are not officially supported. Make sure to lock in on an LTS-version in 'pyproject.toml':
 
-For Django 4.2.x:
+For Django 5.2.x:
 ```toml
-dependencies = ["django>=4.2,<4.3", "django-filip>=0.1.0"]
+dependencies = ["django>=5.2,<5.3"]
+```
